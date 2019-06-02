@@ -1,0 +1,100 @@
+
+R version 3.3.1 (2016-06-21) -- "Bug in Your Hair"
+Copyright (C) 2016 The R Foundation for Statistical Computing
+Platform: x86_64-slackware-linux-gnu (64-bit)
+
+R é um software livre e vem sem GARANTIA ALGUMA.
+Você pode redistribuí-lo sob certas circunstâncias.
+Digite 'license()' ou 'licence()' para detalhes de distribuição.
+
+R é um projeto colaborativo com muitos contribuidores.
+Digite 'contributors()' para obter mais informações e
+'citation()' para saber como citar o R ou pacotes do R em publicações.
+
+Digite 'demo()' para demonstrações, 'help()' para o sistema on-line de ajuda,
+ou 'help.start()' para abrir o sistema de ajuda em HTML no seu navegador.
+Digite 'q()' para sair do R.
+
+[Área de trabalho anterior carregada]
+
+Durante a inicialização - Warning message:
+Setting LC_TIME failed, using "C" 
+> require(devtools)
+Carregando pacotes exigidos: devtools
+> require(roxygen2)
+Carregando pacotes exigidos: roxygen2
+> 
+> Rcpp::compileAttributes()
+> system("cp ./R/RcppExports.R.bkp ./R/RcppExports.R")
+> roxygen2::roxygenize()
+Writing NAMESPACE
+Loading phomstab
+It is recommended to use 'given' instead of 'middle'.
+It is recommended to use 'given' instead of 'middle'.
+Writing NAMESPACE
+> devtools::document()
+Updating phomstab documentation
+Writing NAMESPACE
+Loading phomstab
+It is recommended to use 'given' instead of 'middle'.
+It is recommended to use 'given' instead of 'middle'.
+Writing NAMESPACE
+> devtools::build()
+  Durante a inicialização -      Durante a inicialização - Warning message:
+   Setting LC_TIME failed, using "C" 
+     checking for file '/home/yole/Facul/Doutorado/Rpkg/phomstab/DESCRIPTION' ...  v  checking for file '/home/yole/Facul/Doutorado/Rpkg/phomstab/DESCRIPTION'
+  -  preparing 'phomstab':
+     checking DESCRIPTION meta-information ...  -  checking DESCRIPTION meta-information ...It is recommended to use 'given' instead of 'middle'.
+     It is recommended to use 'given' instead of 'middle'.
+      OK
+  -  cleaning src
+     Warning: /tmp/RtmpOgW9c7/Rbuilde4212226aba/phomstab/man/seriesBettiCriteria.Rd:5: unknown macro '\mathbb'
+   Warning: /tmp/RtmpOgW9c7/Rbuilde4212226aba/phomstab/man/seriesBettiCriteria.Rd:5: unknown macro '\to'
+     Warning: /tmp/RtmpOgW9c7/Rbuilde4212226aba/phomstab/man/seriesBettiCriteria.Rd:5: unknown macro '\subseteq'
+   Warning: /tmp/RtmpOgW9c7/Rbuilde4212226aba/phomstab/man/seriesBettiCriteria.Rd:5: unknown macro '\subseteq'
+   Warning: /tmp/RtmpOgW9c7/Rbuilde4212226aba/phomstab/man/seriesBettiCriteria.Rd:5: unknown macro '\subseteq'
+   Warning: /tmp/RtmpOgW9c7/Rbuilde4212226aba/phomstab/man/seriesBettiCriteria.Rd:5: unknown macro '\leq'
+   Warning: /tmp/RtmpOgW9c7/Rbuilde4212226aba/phomstab/man/seriesBettiCriteria.Rd:5: unknown macro '\leq'
+  -  excluding invalid files
+     Subdirectory 'R' contains invalid file names:
+     'RcppExports.R.bkp' 'build.r.Rout'
+     It is recommended to use 'given' instead of 'middle'.
+     It is recommended to use 'given' instead of 'middle'.
+  -  checking for LF line-endings in source and make files
+  -  checking for empty or unneeded directories
+     Removed empty directory 'phomstab/src/boost'
+-  building 'phomstab_0.0.0.9000.tar.gz'
+     
+[1] "/home/yole/Facul/Doutorado/Rpkg/phomstab_0.0.0.9000.tar.gz"
+> system("R CMD INSTALL ../phomstab_0.0.0.9000.tar.gz")
+Durante a inicialização - Warning message:
+Setting LC_TIME failed, using "C" 
+* installing to library '/usr/lib64/R/library'
+* installing *source* package 'phomstab' ...
+It is recommended to use 'given' instead of 'middle'.
+It is recommended to use 'given' instead of 'middle'.
+** libs
+g++ -std=c++11 -I/usr/include/R -DNDEBUG -I. -I/usr/local/include -I"/usr/lib64/R/library/Rcpp/include"  -DBOOST_DISABLE_THREADS -DCGAL_EIGEN3_ENABLED -DCGAL_HEADER_ONLY -I/usr/include/eigen3 -fpic  -O2 -fPIC -c RcppExports.cpp -o RcppExports.o
+g++ -std=c++11 -I/usr/include/R -DNDEBUG -I. -I/usr/local/include -I"/usr/lib64/R/library/Rcpp/include"  -DBOOST_DISABLE_THREADS -DCGAL_EIGEN3_ENABLED -DCGAL_HEADER_ONLY -I/usr/include/eigen3 -fpic  -O2 -fPIC -c phom.cpp -o phom.o
+g++ -std=c++11 -shared -L/usr/lib64/R/lib -L/usr/local/lib64 -o phomstab.so RcppExports.o phom.o -L/usr/lib64/R/lib -lR
+installing to /usr/lib64/R/library/phomstab/libs
+** R
+** preparing package for lazy loading
+** help
+Warning: /tmp/Rtmp8xVl8r/R.INSTALLe512be0249f/phomstab/man/seriesBettiCriteria.Rd:5: unknown macro '\mathbb'
+Warning: /tmp/Rtmp8xVl8r/R.INSTALLe512be0249f/phomstab/man/seriesBettiCriteria.Rd:5: unknown macro '\to'
+Warning: /tmp/Rtmp8xVl8r/R.INSTALLe512be0249f/phomstab/man/seriesBettiCriteria.Rd:5: unknown macro '\subseteq'
+Warning: /tmp/Rtmp8xVl8r/R.INSTALLe512be0249f/phomstab/man/seriesBettiCriteria.Rd:5: unknown macro '\subseteq'
+Warning: /tmp/Rtmp8xVl8r/R.INSTALLe512be0249f/phomstab/man/seriesBettiCriteria.Rd:5: unknown macro '\subseteq'
+Warning: /tmp/Rtmp8xVl8r/R.INSTALLe512be0249f/phomstab/man/seriesBettiCriteria.Rd:5: unknown macro '\leq'
+Warning: /tmp/Rtmp8xVl8r/R.INSTALLe512be0249f/phomstab/man/seriesBettiCriteria.Rd:5: unknown macro '\leq'
+*** installing help indices
+** building package indices
+** testing if installed package can be loaded
+Durante a inicialização - Warning message:
+Setting LC_TIME failed, using "C" 
+* DONE (phomstab)
+> 
+> proc.time()
+  usuário   sistema decorrido 
+   23.905     0.911    25.390 

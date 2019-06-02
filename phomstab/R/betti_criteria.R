@@ -1,0 +1,146 @@
+#' Remove a number of data points in a dataset
+#'
+#' param X		The chosen dataset
+#' param npoints	The number of points to remove
+#' return		The new dataset
+datasetSubsampling <- function(X,npoints) {
+
+	X[sample(1:nrow(X),nrow(X)-npoints),]
+
+}
+
+#' For a specific topological subspace in the filtration, this function calculate the betti differences between persistence diagrams D1 and D2 produced by two datasets (which are typically considered to be an original dataset S and its perturbation S').
+#'
+#' param D1_dim		A matrix with persistence diagrams for a dataset X
+#' param D2_dim		A matrix with persistence diagrams for a dataset X'
+#' param point		A specific point in the considered filtration
+#' return		A absolute difference of betti numbers associated with the topological subspace X_{point}
+bettiCriteria <- function(D1_dim,D2_dim,point) {
+
+
+	betti_diff = c()
+
+	betti_D1 = length(which(D1_dim[which(D1_dim[,3] >= point),2] <= point))
+	betti_D2 = length(which(D2_dim[which(D2_dim[,3] >= point),2] <= point))
+
+	abs(betti_D1-betti_D2)
+
+}
+
+#' This function calculates the betti differences between the persistence diagram created with an original dataset S and other created by reducing the size of S interatively. Therefore, it will return, for each dimension, a matrix containing de betti-number differences along each sample reduction and along the filtration indices.
+#'
+#'
+#' param X		Input data points matrix
+#' param nLandmarks	Number of landmarks adopted in lazy witness which are chosen by random subsampling
+#' param maxDimension	Maximum dimesion on the constructed complex
+#' param relaxed	If true the lazy witness is relaxed as shown in http://gudhi.gforge.inria.fr/doc/latest/group__witness__complex.html and alpha applies. 
+#' param alpha		Parameter alpha of relaxed lazy witness
+#' param maxscale	The maxscale parameter employed to produce the filtration of witness complexes (of GUDHI package)
+#' param nFiltration	Number of topological subspace in the considered filtration
+#' param nRemoving	Number of elements to be removed from the dataset for new calculation of the persistence diagram
+#' param steps		Number of times the dataset will be reduced
+#' return		A persistence diagram
+#' @export
+bettiHeatmaps <- function(dat,nLandmarks,maxDimension,isWeak,relaxed,alpha,maxscale,nFiltration,nRemoving,steps) {
+
+	
+	S <- seq(0,maxscale,length.out=nFiltration)
+
+	idx <- sample(1:nrow(dat),nRemoving*steps)
+	dat_init <- dat[-idx,]
+	dat_rest <- dat[idx,]
+	D1 <- witDiag(dat_init,nLandmarks,maxDimension,isWeak,relaxed,alpha)	
+
+	betti_diff <-list()
+	
+	dimensions <- seq(0,(maxDimension-1))	
+	
+	# Initialize return data
+	for (dim in dimensions)
+		betti_diff[[(dim+1)]] <- matrix(0,nrow=steps,ncol=nFiltration)
+
+	i <- 0
+	while(nrow(dat_rest) > 0) {
+
+		idx <- sample(1:nrow(dat_rest),nRemoving)
+		dat_init <- rbind(dat_init,dat_rest[idx,])
+		dat_rest <- dat_rest[-idx,]
+		D2 <- witDiag(dat_init,nLandmarks,maxDimension,isWeak,relaxed,alpha)
+
+		for (dim in dimensions)  {
+
+			betti_diff[[(dim+1)]][i,] <- seriesBettiCriteria(D1[[1]],D2[[1]],dim,maxscale,nFiltration)
+		}
+
+		i <- i + 1
+	}
+
+	betti_diff
+
+
+}
+
+#' This function calculates the betti differences between the persistence diagram created with an original dataset S and other created by reducing the size of S.
+#'
+#'
+#' param X		Input data points matrix
+#' param nLandmarks	Number of landmarks adopted in lazy witness which are chosen by random subsampling
+#' param maxDimension	Maximum dimesion on the constructed complex
+#' param relaxed	If true the lazy witness is relaxed as shown in http://gudhi.gforge.inria.fr/doc/latest/group__witness__complex.html and alpha applies. 
+#' param alpha		Parameter alpha of relaxed lazy witness
+#' param maxscale	The maxscale parameter employed to produce the filtration of witness complexes (of GUDHI package)
+#' param nFiltration	Number of topological subspace in the considered filtration
+#' param nRemoving	Number of elements to be removed from the dataset for new calculation of the persistence diagram
+#' return		A persistence diagram
+#' @export
+bettiPerturbation <- function(dat,nLandmarks,maxDimension,isWeak,relaxed,alpha,maxscale,nFiltration,nRemoving) {
+
+	
+	S <- seq(0,maxscale,length.out=nFiltration)
+
+	dat2 = datasetSubsampling(dat,nRemoving)
+
+	D1 = witDiag(dat,nLandmarks,maxDimension,isWeak,relaxed,alpha)	
+	D2 = witDiag(dat2,nLandmarks,maxDimension,isWeak,relaxed,alpha)	
+
+	betti_diff <-list()
+	
+	dimensions = seq(0,(maxDimension-1))
+
+	for (dim in dimensions) {
+		bettis <- seriesBettiCriteria(D1[[1]],D2[[1]],dim,maxscale,nFiltration)
+		betti_diff[[(dim+1)]] <- bettis
+	}
+
+	betti_diff
+
+}
+
+#' This function calculates the betti differences between persistence diagrams D1 and D2 produced by two datasets (which are typically considered to be an original dataset S and its perturbation S'). Given a topological space $X$ and a tame function $f:\mathbb R \to X$ there is a filtration $X_0 \subseteq X_1 \subseteq \dots \subseteq X_t$. This function will calculated the absolute betti number differences between D1 and D2 for each topological subspace $X_i$ with $0 \leq i \leq t$.
+#'
+#' param D1		A matrix with persistence diagrams for a dataset X
+#' param D2		A matrix with persistence diagrams for a dataset X'
+#' param dim		Dimension of the simplicial complexes
+#' param maxscale	The maxscale parameter employed to produce the filtration of witness complexes (of GUDHI package)
+#' param nFiltration	Number of topological subspace in the considered filtration
+#' return		A absolute difference of betti numbers associated with each topological subspace in the filtration
+#' @export
+seriesBettiCriteria <- function(D1,D2,dim,maxscale,nFiltration) {
+
+	S <- seq(0,maxscale,length.out=nFiltration)
+	
+	D1_dim <- D1[which(D1[,1] == dim),]
+	D2_dim <- D2[which(D2[,1] == dim),]
+
+	betti_diff <- c()
+
+	for (i in S) {
+
+		betti_diff <- c(betti_diff,bettiCriteria(D1_dim,D2_dim,i))
+
+	}
+
+	betti_diff
+
+
+}
