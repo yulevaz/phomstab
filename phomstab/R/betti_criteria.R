@@ -33,15 +33,13 @@ bettiCriteria <- function(D1_dim,D2_dim,point) {
 #' param X		Input data points matrix
 #' param nLandmarks	Number of landmarks adopted in lazy witness which are chosen by random subsampling
 #' param maxDimension	Maximum dimesion on the constructed complex
-#' param relaxed	If true the lazy witness is relaxed as shown in http://gudhi.gforge.inria.fr/doc/latest/group__witness__complex.html and alpha applies. 
-#' param alpha		Parameter alpha of relaxed lazy witness
 #' param maxscale	The maxscale parameter employed to produce the filtration of witness complexes (of GUDHI package)
 #' param nFiltration	Number of topological subspace in the considered filtration
 #' param nRemoving	Number of elements to be removed from the dataset for new calculation of the persistence diagram
 #' param steps		Number of times the dataset will be reduced
 #' return		A persistence diagram
 #' @export
-bettiHeatmaps <- function(dat,nLandmarks,maxDimension,isWeak,relaxed,alpha,maxscale,nFiltration,nRemoving,steps) {
+bettiHeatmaps <- function(dat,nLandmarks,maxDimension,isWeak,maxscale,nFiltration,nRemoving,steps) {
 
 	
 	S <- seq(0,maxscale,length.out=nFiltration)
@@ -49,7 +47,7 @@ bettiHeatmaps <- function(dat,nLandmarks,maxDimension,isWeak,relaxed,alpha,maxsc
 	idx <- sample(1:nrow(dat),nRemoving*steps)
 	dat_init <- dat[-idx,]
 	dat_rest <- dat[idx,]
-	D1 <- witDiag(dat_init,nLandmarks,maxDimension,isWeak,relaxed,alpha)	
+	D1 <- witDiag(dat_init,nLandmarks,maxDimension,isWeak,T,maxscale^2)	
 
 	betti_diff <-list()
 	
@@ -65,7 +63,7 @@ bettiHeatmaps <- function(dat,nLandmarks,maxDimension,isWeak,relaxed,alpha,maxsc
 		idx <- sample(1:nrow(dat_rest),nRemoving)
 		dat_init <- rbind(dat_init,dat_rest[idx,])
 		dat_rest <- dat_rest[-idx,]
-		D2 <- witDiag(dat_init,nLandmarks,maxDimension,isWeak,relaxed,alpha)
+		D2 <- witDiag(dat_init,nLandmarks,maxDimension,isWeak,T,maxscale^2)
 
 		for (dim in dimensions)  {
 
@@ -86,22 +84,20 @@ bettiHeatmaps <- function(dat,nLandmarks,maxDimension,isWeak,relaxed,alpha,maxsc
 #' param X		Input data points matrix
 #' param nLandmarks	Number of landmarks adopted in lazy witness which are chosen by random subsampling
 #' param maxDimension	Maximum dimesion on the constructed complex
-#' param relaxed	If true the lazy witness is relaxed as shown in http://gudhi.gforge.inria.fr/doc/latest/group__witness__complex.html and alpha applies. 
-#' param alpha		Parameter alpha of relaxed lazy witness
 #' param maxscale	The maxscale parameter employed to produce the filtration of witness complexes (of GUDHI package)
 #' param nFiltration	Number of topological subspace in the considered filtration
 #' param nRemoving	Number of elements to be removed from the dataset for new calculation of the persistence diagram
 #' return		A persistence diagram
 #' @export
-bettiPerturbation <- function(dat,nLandmarks,maxDimension,isWeak,relaxed,alpha,maxscale,nFiltration,nRemoving) {
+bettiPerturbation <- function(dat,nLandmarks,maxDimension,isWeak,relaxed,maxscale,nFiltration,nRemoving) {
 
 	
 	S <- seq(0,maxscale,length.out=nFiltration)
 
 	dat2 = datasetSubsampling(dat,nRemoving)
 
-	D1 = witDiag(dat,nLandmarks,maxDimension,isWeak,relaxed,alpha)	
-	D2 = witDiag(dat2,nLandmarks,maxDimension,isWeak,relaxed,alpha)	
+	D1 = witDiag(dat,nLandmarks,maxDimension,isWeak,T,maxscale^2)	
+	D2 = witDiag(dat2,nLandmarks,maxDimension,isWeak,T,maxscale^2)	
 
 	betti_diff <-list()
 	
